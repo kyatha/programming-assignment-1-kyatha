@@ -19,6 +19,33 @@ class Logistic:
 
     def _iteration_step(self, x_train, y_train):
         # put your training code here
+        
+        #Sigmoid Function 
+        #m = self.theta.T.dot(x_train)
+        m = np.dot(x_train,self.theta)
+        h_x = 1 / (1 + np.exp(-m))
+        
+        #l_theta using maximum likelihood estimation method to get theta
+        #log_cost = (y_train * np.log(pred_y)) + ((1 - y_train) * np.log(1 - pred_y))
+        
+        #Newton method
+        #Diagonal matrix R
+        R_ii = h_x * (1 - h_x)
+        R = np.diag(R_ii)
+        #x_train.T* R * x_train
+        a = x_train.T.dot(R).dot(x_train)
+        #x_train.T
+        b = x_train.T
+        #y_train - pred_y
+        c = y_train - h_x
+        
+        #x_train.T * c
+        d = np.dot(b,c)
+        #change in theta
+        change_theta = np.dot(np.linalg.inv(a), d)
+
+        
+        self.theta = self.theta + change_theta
         pass
 
     def train(self, x_train, y_train):
