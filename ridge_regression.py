@@ -42,7 +42,7 @@ class RidgeRegression:
         z = x_train.T.dot(y_train)
 
         #calculate theta
-        self.theta = np.linalg.lstsq(p + c ,z)[0]
+        self.theta = np.linalg.lstsq(p + c ,z, rcond=None)[0]
 
         
         return self.theta
