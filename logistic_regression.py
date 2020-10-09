@@ -19,6 +19,37 @@ class Logistic:
 
     def _iteration_step(self, x_train, y_train):
         # put your training code here
+        
+        #Sigmoid Function
+        def sigmoid(m):
+            return 1.0 / (1.0 + np.exp(-m))
+
+        m = np.dot(x_train, self.theta.T)
+        h_x = sigmoid(m)
+        
+        
+        #Newton method
+        #Diagonal matrix R
+        R_ii = h_x * (1 - h_x)
+        R = np.diagflat([R_ii])
+       
+        #x_train.T* R * x_train
+        a = x_train.T.dot(R).dot(x_train)
+        #x_train.T
+        b = x_train.T
+        #y_train - pred_y
+        c = y_train - h_x
+        
+        #x_train.T * c
+        d = np.dot(b,c)
+        #change in theta
+      
+        change_theta = np.linalg.lstsq(a ,d, rcond=None)[0]
+
+        
+        self.theta = self.theta + change_theta
+        
+
         pass
 
     def train(self, x_train, y_train):
@@ -84,4 +115,10 @@ class Logistic:
         """
         pred = np.zeros([x_data.shape[0], 2])
         # put your predicting code here
+        data = np.dot(x_data, self.theta.T)
+        prob_1 = np.array((1.0 / (1 + np.exp(-data))))
+        
+        prob_0 = np.array((1.0 - prob_1))
+    
+        pred = np.column_stack((prob_0, prob_1))
         return pred
