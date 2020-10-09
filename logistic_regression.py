@@ -20,18 +20,19 @@ class Logistic:
     def _iteration_step(self, x_train, y_train):
         # put your training code here
         
-        #Sigmoid Function 
-        #m = self.theta.T.dot(x_train)
-        m = np.dot(x_train,self.theta)
-        h_x = 1 / (1 + np.exp(-m))
+        #Sigmoid Function
+        def sigmoid(m):
+            return 1.0 / (1.0 + np.exp(-m))
+
+        m = np.dot(x_train, self.theta.T)
+        h_x = sigmoid(m)
         
-        #l_theta using maximum likelihood estimation method to get theta
-        #log_cost = (y_train * np.log(pred_y)) + ((1 - y_train) * np.log(1 - pred_y))
         
         #Newton method
         #Diagonal matrix R
         R_ii = h_x * (1 - h_x)
-        R = np.diag(R_ii)
+        R = np.diagflat([R_ii])
+       
         #x_train.T* R * x_train
         a = x_train.T.dot(R).dot(x_train)
         #x_train.T
@@ -42,10 +43,13 @@ class Logistic:
         #x_train.T * c
         d = np.dot(b,c)
         #change in theta
-        change_theta = np.dot(np.linalg.inv(a), d)
+      
+        change_theta = np.linalg.lstsq(a ,d, rcond=None)[0]
 
         
         self.theta = self.theta + change_theta
+        
+
         pass
 
     def train(self, x_train, y_train):
@@ -111,4 +115,10 @@ class Logistic:
         """
         pred = np.zeros([x_data.shape[0], 2])
         # put your predicting code here
+        data = np.dot(x_data, self.theta.T)
+        prob_1 = np.array((1.0 / (1 + np.exp(-data))))
+        
+        prob_0 = np.array((1.0 - prob_1))
+    
+        pred = np.column_stack((prob_0, prob_1))
         return pred
